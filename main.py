@@ -2,11 +2,12 @@ import torch
 import argparse
 import os
 import numpy as np
-from logger_utils import set_log
+from utils.logger_utils import set_log
+from utils import utils
 from tensorboardX import SummaryWriter
 import numpy as np
 import matplotlib.pyplot as plt
-from option_critic import train_four_rooms
+from train.option_critic import train_four_rooms
 
 def main(args):
     # Create directories

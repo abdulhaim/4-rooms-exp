@@ -1,7 +1,7 @@
 ## Simple implementation of the [Option-Critic Architecture](https://arxiv.org/abs/1609.05140) on the Four-rooms environment.
 
-from fourrooms import FourRooms
-from utils import *
+from train.fourrooms import FourRooms
+from utils.utils import *
 
 from time import sleep
 
