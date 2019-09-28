@@ -1,1 +1,1 @@
-# 4-rooms-exp
+Option Critic Architecture on 4 Rooms Environment
