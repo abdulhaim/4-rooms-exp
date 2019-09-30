@@ -114,7 +114,7 @@ class Critic():
         else:
             return advantage[option]
 
-    def update_Qs(self, state, option, action, reward, done, terminations, total_steps, log, args, tb_writer):
+    def update_Qs(self, state, option, action, reward, done, terminations, total_steps, log, args, tb_writer, run, noptions):
         # One step target for Q_Omega
         target = reward
         if not done:
@@ -131,7 +131,9 @@ class Critic():
         if(total_steps%10 == 0 and total_steps!=0):
             log[args.log_name].info("tderror_Q_U {} at step {}".format(tderror_Q_U, total_steps))
             log[args.log_name].info("tderror_Q_Omega {} at step {}".format(tderror_Q_Omega, total_steps))
-            tb_writer.add_scalars("errors", {"tderror_Q_U": tderror_Q_U, "tderror_Q_Omega": tderror_Q_Omega}, total_steps)
+
+            tb_writer.add_scalars('tderror_Q_U/' + str(run), {str(noptions): tderror_Q_U}, total_steps)
+            tb_writer.add_scalars('tderror_Q_Omega/' + str(run), {str(noptions): tderror_Q_Omega}, total_steps)
 
         # Cache
         self.last_state = state

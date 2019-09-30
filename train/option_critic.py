@@ -10,13 +10,12 @@ import numpy as np
 from IPython.display import clear_output
 import matplotlib.pyplot as plt
 
+def all_options(args,log,tb_writer, total_options):
+
+    for noption in range(1,total_options+1):
+        train_four_rooms(args, log, tb_writer, noption)
+
 def train_four_rooms(args, log, tb_writer, noptions):
-    # 30 locations 
-
-    # Evaluation reward while training 
-    # 30 locations, mean variance of reward and mean and variance of steps 
-
-    # 10 steps 
 
     env = FourRooms()
     env.reset()
@@ -104,11 +103,11 @@ def train_four_rooms(args, log, tb_writer, noptions):
 
                 if(step%10==0 and step!=0):
                     log[args.log_name].info("Reward {}".format(reward))
+                    log[args.log_name].info("Evaluation Reward {} at step {}, run {} for options{}".format(eval_reward/10, total_steps, run, noptions))
+                    log[args.log_name].info("Average Reward {} at step {}, run {}".format(eval_reward/total_steps, total_steps, run, noptions))
+                    tb_writer.add_scalars('evaluation_reward/' + str(run), {str(noptions): eval_reward/10}, total_steps)
+                    tb_writer.add_scalars('cumulative_reward/' + str(run), {str(noptions): total_reward/total_steps}, total_steps)
 
-                    log[args.log_name].info("Evaluation Reward {} at step {}, run {}".format(eval_reward/10, total_steps, run))
-                    log[args.log_name].info("Average Reward {} at step {}, run {}".format(eval_reward/total_steps, total_steps, run))
-                    tb_writer.add_scalars("reward", {"eval_reward": eval_reward/10}, total_steps)
-                    tb_writer.add_scalars("reward", {"cumulative_reward": total_reward/total_steps}, total_steps)
                     eval_reward = 0
                 
                 # Termination might occur upon entering new state
@@ -121,7 +120,7 @@ def train_four_rooms(args, log, tb_writer, noptions):
                 action = option_policies[option].sample(state)
                 
                 # Critic update
-                critic.update_Qs(state, option, action, reward, done, option_terminations, total_steps, log, args, tb_writer)
+                critic.update_Qs(state, option, action, reward, done, option_terminations, total_steps, log, args, tb_writer, run, noptions)
                 
                 # Intra-option policy update with baseline
                 Q_U = critic.Q_U(state, option, action)
@@ -142,11 +141,11 @@ def train_four_rooms(args, log, tb_writer, noptions):
             history[run, episode, 0] = step
             history[run, episode, 1] = avg_duration
 
-            log[args.log_name].info("Average Duration of{} for run {}".format(avg_duration,run))
-            tb_writer.add_scalars("Average Duration", {"avg_duration": avg_duration}, run)
+            log[args.log_name].info("Average Duration of{} for run {} for noptions {}".format(avg_duration,run, noptions))
+            tb_writer.add_scalars('average_duration/' + str(run), {str(noptions): avg_duration}, run)
 
             log[args.log_name].info("Option Switches are {} for run {}".format(option_switches,run))
-            tb_writer.add_scalars("Option Switches for Runs", {"option_switches": option_switches}, run)
+            tb_writer.add_scalars("option_switches/" + str(run), {str(noptions): option_switches}, run)
 
            
         option_terminations_list.append(option_terminations)

@@ -3,11 +3,11 @@ import argparse
 import os
 import numpy as np
 from utils.logger_utils import set_log
-from utils import utils
+from utils.utils import *
 from tensorboardX import SummaryWriter
 import numpy as np
 import matplotlib.pyplot as plt
-from train.option_critic import train_four_rooms
+from train.option_critic import all_options
 
 def main(args):
     # Create directories
@@ -24,14 +24,9 @@ def main(args):
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
-    iterations = 10
-    noptions = 30
+    total_options = 30
 
-    # Start train
-    for noption in range(1,noptions+1):
-        for i in range(iterations):
-            train_four_rooms(args, log, tb_writer, noptions)
-
+    all_options(args,log,tb_writer, total_options)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
